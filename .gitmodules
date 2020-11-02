@@ -1,0 +1,3 @@
+[submodule "rclone"]
+	path = rclone
+	url = ./rclone
