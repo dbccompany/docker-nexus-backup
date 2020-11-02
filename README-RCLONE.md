@@ -28,7 +28,7 @@ docker run -it --rm --name docker-nexus-backup-rclone     \
 
 - Configure one or many Rclone remotes in a configuration file (example under `rclone_config/rclone.conf`)
 - Mount the RCLONE configuration file to `/root/.config/rclone/rclone.conf` (use configmap for k8s)
-- Mount the Nexus data directory :` /nexus-data`
+- Mount the Nexus data directory : `/nexus-data`
 - Mount the Nexus data backup directory
 - Configure the nexus host, port and authorization token
 - Authorization token is : `"login:password".getBytes().encodeBase64().toString()`
@@ -40,7 +40,7 @@ docker run -it --rm --name docker-nexus-backup-rclone     \
 
 Put the repositories defined in '\$OFFLINE_REPOS' offline before updating, requires enabling script execution on Nexus
 
-add `nexus.scripts.allowCreation=true` to file: `$data-dir/etc/nexus.properties` then restart the nexus server.
+Add `nexus.scripts.allowCreation=true` to file: `$data-dir/etc/nexus.properties` then restart the nexus server.
 
 ## 3 Trigger the build
 
