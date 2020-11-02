@@ -2,10 +2,8 @@
 
 set -o pipefail
 
-source /root/.bashrc
-
 # Check for a stale lock file every 5 minutes.
-LOCK_CHECK_INTERVAL=300
+LOCK_CHECK_INTERVAL=5
 # Even if NEXUS_BACKUP_DIRECTORY is ill-defined, we define this up here and let validation below do the rest.
 LOCK_FILE="${NEXUS_BACKUP_DIRECTORY}/.nexus-backup-lock"
 # Set a timeout of 12 hours for the backup procedure.
@@ -35,10 +33,13 @@ function backup {
     sleep "${GRACE_PERIOD}"
 
     echo "==> Attempting to backup the 'default' blobstore."
-    tar c "${NEXUS_DATA_DIRECTORY}/blobs/default/" | gsutil cp - "${TARGET_BUCKET}/${TIMESTAMP}/blobstore.tar"
-
+    mkdir -p /${TIMESTAMP}/blobs
+    tar -cf /${TIMESTAMP}/blobs/blobstore.tar "${NEXUS_DATA_DIRECTORY}/blobs/default/"
+    rclone copy /${TIMESTAMP}/blobs "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}"
     local EXIT_CODE_1=$?
+    rm -rf /${TIMESTAMP}/blobs
 
+    
     if [ ${EXIT_CODE_1} -ne 0 ]; then
         echo "(!) Couldn't backup the blobstore. Manual intervention is advised."
     else
@@ -46,10 +47,13 @@ function backup {
     fi
 
     echo "==> Attempting to backup the Nexus databases."
-    tar c "${NEXUS_BACKUP_DIRECTORY}/" | gsutil cp - "${TARGET_BUCKET}/${TIMESTAMP}/databases.tar"
-
+    mkdir -p /${TIMESTAMP}/databases
+    tar -cf /${TIMESTAMP}/databases/databases.tar "${NEXUS_DATA_DIRECTORY}/"
+    rclone copy /${TIMESTAMP}/databases "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}"
     local EXIT_CODE_2=$?
+    rm -rf /${TIMESTAMP}/databases
 
+    
     if [ ${EXIT_CODE_2} -ne 0 ]; then
         echo "(!) Couldn't backup the databases. Manual intervention is advised."
     else
@@ -62,6 +66,7 @@ function backup {
 
     # Remove the lock file...
     rm -f "${LOCK_FILE}"
+    rm -rf /${TIMESTAMP}
 }
 
 function ensure_groovy_script {
@@ -187,7 +192,8 @@ fi
 
 if [[ -z "${TARGET_BUCKET}" ]];
 then
-    echo "Target GCS bucket is not defined."
+    # echo "Target GCS bucket is not defined."
+    echo "Target bucket is not defined."
     exit 1
 fi
 
@@ -195,16 +201,6 @@ if [[ -z "${GRACE_PERIOD}" ]];
 then
     echo "Grace period is not defined."
     exit 1
-fi
-
-if [[ -f "${CLOUD_IAM_SERVICE_ACCOUNT_KEY_PATH}" ]];
-then
-    echo "==> Setting up authentication with the specified service account..."
-    gcloud auth activate-service-account --key-file "${CLOUD_IAM_SERVICE_ACCOUNT_KEY_PATH}" || \
-    {
-        echo "(!) Couldn't activate the specified service account."
-        exit 1
-    }
 fi
 
 monitor_lock_file &
