@@ -1,6 +1,6 @@
 # RCLONE docker backup usage
 
-## 1- Build docker image
+## 1- Build the docker image
 
 ```bash
 TAG='docker-nexus-backup:latest'
@@ -26,24 +26,25 @@ docker run -it --rm --name docker-nexus-backup-rclone     \
 
 ## 2-a Requirements
 
-- Configure one or many Rclone remotes in a configuration file (example under : ./rclone_config/rclone.conf)
-- Mounted RCLONE configuration file to /root/.config/rclone/rclone.conf (use configmap for k8s)
-- Mounted Nexus data directory : /nexus-data
-- Mounted Nexus data backup directory
-- Configure nexus host, port and authorization token
-- Authorization token is : `login:password".getBytes().encodeBase64().toString()`
-- TARGET_BUCKET target S3 bucket
-- OFFLINE_REPOS are repositories that will be put offline before the backup starts, requres enabling script execution on the nexus server
-- RCLONE_REMOTE rclone remote to use (defined in the rlcone configuration file)
+- Configure one or many Rclone remotes in a configuration file (example under `rclone_config/rclone.conf`)
+- Mount the RCLONE configuration file to `/root/.config/rclone/rclone.conf` (use configmap for k8s)
+- Mount the Nexus data directory :` /nexus-data`
+- Mount the Nexus data backup directory
+- Configure the nexus host, port and authorization token
+- Authorization token is : `"login:password".getBytes().encodeBase64().toString()`
+- TARGET_BUCKET : target S3 bucket
+- OFFLINE_REPOS : repositories that will be put offline before the backup starts, requires enabling script execution on the nexus server
+- RCLONE_REMOTE : rclone remote to use (defined in the rlcone configuration file)
 
-## 2-b Optionals
+## 2-b Optional
 
-Put the repositories defined in '\$OFFLINE_REPOS' offline before updating:
-Requires enabling script execution on Nexus: add `nexus.scripts.allowCreation=true` to file: `$data-dir/etc/nexus.properties` then restart the nexus server.
+Put the repositories defined in '\$OFFLINE_REPOS' offline before updating, requires enabling script execution on Nexus
+
+add `nexus.scripts.allowCreation=true` to file: `$data-dir/etc/nexus.properties` then restart the nexus server.
 
 ## 3 Trigger the build
 
-run the command `touch ${NEXUS_BACKUP_DIRECTORY}/${TRIGGER_FILE_NAME}` the default TRIGGER_FILE_NAME value is `.backup`
+Run the command `touch ${NEXUS_BACKUP_DIRECTORY}/${TRIGGER_FILE_NAME}` the default TRIGGER_FILE_NAME value is `.backup`
 
 ```bash
 docker exec -it docker-nexus-backup-rclone bash
