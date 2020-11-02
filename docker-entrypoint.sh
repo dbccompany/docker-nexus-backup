@@ -3,7 +3,7 @@
 set -o pipefail
 
 # Check for a stale lock file every 5 minutes.
-LOCK_CHECK_INTERVAL=5
+LOCK_CHECK_INTERVAL=300
 # Even if NEXUS_BACKUP_DIRECTORY is ill-defined, we define this up here and let validation below do the rest.
 LOCK_FILE="${NEXUS_BACKUP_DIRECTORY}/.nexus-backup-lock"
 # Set a timeout of 12 hours for the backup procedure.
@@ -192,7 +192,6 @@ fi
 
 if [[ -z "${TARGET_BUCKET}" ]];
 then
-    # echo "Target GCS bucket is not defined."
     echo "Target bucket is not defined."
     exit 1
 fi
