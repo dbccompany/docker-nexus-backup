@@ -17,8 +17,10 @@ docker run -it --rm --name docker-nexus-backup-rclone     \
         -e NEXUS_AUTHORIZATION="Basic YWRtaW46YWRtaW4=" \
         -e NEXUS_BACKUP_DIRECTORY="/nexus-data/backup" \
         -e NEXUS_DATA_DIRECTORY="/nexus-data" \
-        -e NEXUS_LOCAL_HOST_PORT="172.17.0.2:8081" \
+        -e NEXUS_LOCAL_HOST_PORT="172.17.0.4:8081" \
         -e TARGET_BUCKET="nexus-backup-test" \
+        -e GRACE_PERIOD="2" \
+        -e STREAMING_UPLOAD_CUTOFF="5000000" \
         -e OFFLINE_REPOS="myrepo" \
         -e RCLONE_REMOTE="minio-local"  \
         $TAG
@@ -49,4 +51,6 @@ Run the command `touch ${NEXUS_BACKUP_DIRECTORY}/${TRIGGER_FILE_NAME}` the defau
 ```bash
 docker exec -it docker-nexus-backup-rclone bash
 touch ${NEXUS_BACKUP_DIRECTORY}/.backup
+or:
+docker exec -it docker-nexus-backup-rclone touch ${NEXUS_BACKUP_DIRECTORY}/.backup
 ```

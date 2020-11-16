@@ -36,6 +36,9 @@ ENV TARGET_BUCKET "nexus-backup"
 # The amount of time in seconds to wait between stopping repositories and starting the upload.
 ENV GRACE_PERIOD "60"
 
+# Size of the file chunk before streaimg it to the remote.
+ENV STREAMING_UPLOAD_CUTOFF "5000000"
+
 # The name of the Rclone remote.
 ENV RCLONE_REMOTE "aws1"
 

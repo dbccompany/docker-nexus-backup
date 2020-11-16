@@ -33,13 +33,10 @@ function backup {
     sleep "${GRACE_PERIOD}"
 
     echo "==> Attempting to backup the 'default' blobstore."
-    mkdir -p /${TIMESTAMP}/blobs
-    tar -cf /${TIMESTAMP}/blobs/blobstore.tar "${NEXUS_DATA_DIRECTORY}/blobs/default/"
-    rclone copy /${TIMESTAMP}/blobs "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}"
-    local EXIT_CODE_1=$?
-    rm -rf /${TIMESTAMP}/blobs
+    tar c "${NEXUS_DATA_DIRECTORY}/blobs/default/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/blobstore.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
-    
+    local EXIT_CODE_1=$?
+
     if [ ${EXIT_CODE_1} -ne 0 ]; then
         echo "(!) Couldn't backup the blobstore. Manual intervention is advised."
     else
@@ -47,13 +44,10 @@ function backup {
     fi
 
     echo "==> Attempting to backup the Nexus databases."
-    mkdir -p /${TIMESTAMP}/databases
-    tar -cf /${TIMESTAMP}/databases/databases.tar "${NEXUS_DATA_DIRECTORY}/"
-    rclone copy /${TIMESTAMP}/databases "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}"
-    local EXIT_CODE_2=$?
-    rm -rf /${TIMESTAMP}/databases
+    tar c "${NEXUS_BACKUP_DIRECTORY}/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/databases.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
-    
+    local EXIT_CODE_2=$?
+
     if [ ${EXIT_CODE_2} -ne 0 ]; then
         echo "(!) Couldn't backup the databases. Manual intervention is advised."
     else
