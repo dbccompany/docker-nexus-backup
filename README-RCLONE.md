@@ -52,5 +52,5 @@ Run the command `touch ${NEXUS_BACKUP_DIRECTORY}/${TRIGGER_FILE_NAME}` the defau
 docker exec -it docker-nexus-backup-rclone bash
 touch ${NEXUS_BACKUP_DIRECTORY}/.backup
 or:
-docker exec -it docker-nexus-backup-rclone touch ${NEXUS_BACKUP_DIRECTORY}/.backup
+docker exec -it docker-nexus-backup-rclone touch /nexus-data/backup/.backup
 ```
