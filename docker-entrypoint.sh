@@ -36,7 +36,6 @@ function backup {
     tar c "${NEXUS_DATA_DIRECTORY}/blobs/default/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/blobstore.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
     local EXIT_CODE_1=$?
-    rm -rf /${TIMESTAMP}/blobs
 
     
     if [ ${EXIT_CODE_1} -ne 0 ]; then
@@ -49,7 +48,6 @@ function backup {
     tar c "${NEXUS_BACKUP_DIRECTORY}/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/databases.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
     local EXIT_CODE_2=$?
-    rm -rf /${TIMESTAMP}/databases
 
     
     if [ ${EXIT_CODE_2} -ne 0 ]; then
@@ -64,7 +62,6 @@ function backup {
 
     # Remove the lock file...
     rm -f "${LOCK_FILE}"
-    rm -rf /${TIMESTAMP}
 }
 
 function ensure_groovy_script {
