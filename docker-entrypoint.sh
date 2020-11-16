@@ -36,7 +36,6 @@ function backup {
     tar c "${NEXUS_DATA_DIRECTORY}/blobs/default/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/blobstore.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
     local EXIT_CODE_1=$?
-
     
     if [ ${EXIT_CODE_1} -ne 0 ]; then
         echo "(!) Couldn't backup the blobstore. Manual intervention is advised."
@@ -48,7 +47,6 @@ function backup {
     tar c "${NEXUS_BACKUP_DIRECTORY}/" | rclone rcat "${RCLONE_REMOTE}:${TARGET_BUCKET}/${TIMESTAMP}/databases.tar" --streaming-upload-cutoff ${STREAMING_UPLOAD_CUTOFF}
 
     local EXIT_CODE_2=$?
-
     
     if [ ${EXIT_CODE_2} -ne 0 ]; then
         echo "(!) Couldn't backup the databases. Manual intervention is advised."
