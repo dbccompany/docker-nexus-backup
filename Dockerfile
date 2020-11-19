@@ -13,7 +13,7 @@ RUN ./rclone version
 ## Build final image
 FROM alpine:3.10
 
-LABEL maintainer devops@travelaudience.com
+LABEL maintainer docker@dbc.company
 
 # The authorization header to use when calling the Nexus API.
 ENV NEXUS_AUTHORIZATION "Basic YWRtaW46YWRtaW4xMjMK"
